@@ -1,0 +1,184 @@
+# Apply common configuration to all hosts
+- name: basesetup
+  hosts: all
+  roles:
+    - role: baseline
+      tags:
+        - baseline
+    - role: viasite-ansible.zsh
+      become: true
+      zsh_user: ubuntu
+      zsh_fzf_arch: armv7
+      zsh_fzf_url: "https://github.com/junegunn/fzf/releases/download/{{ zsh_fzf_version }}/fzf-{{ zsh_fzf_version }}-{{ zsh_fzf_os }}_{{ zsh_fzf_arch }}.tar.gz"
+      zsh_fzf_version: 0.24.4
+      tags:
+        - zsh
+        - baseline
+    - role: viasite-ansible.zsh
+      become: true
+      zsh_user: root
+      zsh_fzf_arch: armv7
+      zsh_fzf_url: "https://github.com/junegunn/fzf/releases/download/{{ zsh_fzf_version }}/fzf-{{ zsh_fzf_version }}-{{ zsh_fzf_os }}_{{ zsh_fzf_arch }}.tar.gz"
+      zsh_fzf_version: 0.24.4
+      tags:
+        - zsh
+        - baseline
+
+    - role: cloudalchemy.node-exporter
+      tags:
+        - monitoring
+        - exporters
+
+  post_tasks:
+    - name: Check if reboot is required from file
+      stat:
+        path: /var/run/reboot-required
+      register: rebootfile
+
+    - name: Reboot if required
+      reboot:
+        post_reboot_delay: 60
+      become: true
+      throttle: 1 # Ensure one after another is rebooted
+      when: rebootfile.stat.exists
+
+- name: monitoring_setup
+  hosts: monitoring
+  roles:
+    - role: cloudalchemy.prometheus
+      prometheus_web_external_url: https://home.gleich.dev/prometheus
+      prometheus_storage_retention: 60d
+      prometheus_global:
+        scrape_interval: 15s
+        scrape_timeout: 15s
+        evaluation_interval: 15s
+      prometheus_scrape_configs:
+        - job_name: "nodes"
+          metrics_path: /metrics
+          static_configs:
+          - targets:
+            - "localhost:9100"
+        - job_name: "prometheus"
+          metrics_path: /prometheus/metrics
+          static_configs:
+          - targets:
+            - "localhost:9090"
+        - job_name: "hue"
+          metrics_path: /metrics
+          static_configs:
+          - targets:
+            - "localhost:9366"
+        - job_name: "homematicIP"
+          metrics_path: /metrics
+          static_configs:
+            - targets:
+                - "localhost:8000"
+      tags:
+        - monitoring
+        - prometheus
+
+# TODO: Configure Alertmanager
+#    - role: cloudalchemy.alertmanager
+#      alertmanager_web_external_url: https://home.gleich.dev/alertmanager
+#      tags:
+#        - monitoring
+#        - alertmanager
+
+    - role: cloudalchemy.grafana
+      grafana_version: 7.3.6
+      grafana_url: '%(protocol)s://%(domain)s:%(http_port)s/grafana/'
+      grafana_datasources:
+        - name: prometheus
+          type: prometheus
+          access: proxy
+          url: 'http://localhost:9090/prometheus/'
+          isDefault: true
+          basicAuth: false
+      grafana_dashboards:
+        - dashboard_id: 1860
+          revision_id: 21
+          datasource: prometheus
+      grafana_dashboards_dir: ../dashboards
+      grafana_security:
+        admin_password: "{{ lookup('password', '../credentials/grafana_password') }}"
+        admin_user: "{{ lookup('password', '../credentials/grafana_user') }}"
+      tags:
+        - grafana
+        - monitoring
+
+    - role: ddclient
+      tags:
+        - ddclient
+        - webserver
+
+    - role: geerlingguy.certbot
+      certbot_create_if_missing: true
+      certbot_create_method: standalone
+      certbot_admin_email: themirgleich@gmail.com
+      certbot_create_standalone_stop_services:
+        - nginx
+      certbot_certs:
+        - domains:
+            - home.gleich.dev
+      certbot_auto_renew_user: root
+      become: true
+      tags:
+        - monitoring
+        - webserver
+        - certbot
+
+
+
+    - role: geerlingguy.nginx
+      nginx_vhosts:
+        # HTTPS Redirect
+        - listen: "80"
+          server_name: "{{ public_dns_name }}"
+          root: "/var/www/home.gleich.dev"
+          index: "index.php index.html index.htm"
+          filename: "{{ public_dns_name }}_http.conf"
+
+        - listen: "443 ssl http2"
+          server_name: "{{ public_dns_name }}"
+          root: "/var/www/home.gleich.dev"
+          index: "index.php index.html index.htm"
+          filename: "{{ public_dns_name }}_https.conf"
+          # TODO: Secure prometheus with basic auth
+          extra_parameters: |
+            location /prometheus/ {
+                proxy_pass http://127.0.0.1:9090;
+            }
+
+            location /grafana/ {
+                proxy_pass http://127.0.0.1:3000;
+                rewrite ^/grafana/?(.*) /$1 break;
+            }
+
+            ssl_certificate           /etc/letsencrypt/live/home.gleich.dev/fullchain.pem;
+            ssl_certificate_key       /etc/letsencrypt/live/home.gleich.dev/privkey.pem;
+            ssl_protocols             TLSv1.2 TLSv1.3;
+            ssl_ciphers               ALL:!RSA:!CAMELLIA:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SHA1:!SHA256:!SHA384;
+            ssl_prefer_server_ciphers on;
+
+            # HSTS
+            add_header Strict-Transport-Security "max-age=2592000;";
+
+            # Session Cache
+            ssl_session_cache shared:ssl_session_cache:10m;
+      become: true
+      tags:
+        - monitoring
+        - webserver
+        - nginx
+
+- name: exporters_setup
+  hosts: monitoring
+  roles:
+    - role: hue-exporter
+      tags:
+        - exporters
+        - hue-exporter
+    - role: homematic-exporter
+      tags:
+        - exporters
+        - homematic-exporter

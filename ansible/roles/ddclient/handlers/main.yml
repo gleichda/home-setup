@@ -1,0 +1,7 @@
+---
+# handlers file for ddclient
+- name: restart ddclient
+  service:
+    name: ddclient
+    enabled: true
+    state: restarted # ddclient can not be reloaded

@@ -1,0 +1,7 @@
+---
+# tasks file for hue-exporter
+- import_tasks: preflight.yaml
+- import_tasks: install.yaml
+  become: true
+- import_tasks: configure.yaml
+  become: true

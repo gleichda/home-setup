@@ -1,0 +1,7 @@
+---
+# handlers file for baseline
+- name: touch reboot file
+  file:
+    state: touch
+    path: /var/run/reboot-required
+  become: true

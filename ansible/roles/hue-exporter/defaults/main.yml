@@ -1,0 +1,12 @@
+---
+# defaults file for hue-exporter
+
+_hue_exporter_system_group: "hue-exp"
+_hue_exporter_system_user: "{{ _hue_exporter_system_group }}"
+hue_exporter_version: 0.2.2
+_hue_exporter_binary_install_dir: "/usr/local/bin"
+hue_exporter_match_names: true
+hue_exporter_ignore_types:
+  - CLIPGenericStatus
+hue_exporter_web_listen_address: :9366
+hue_exporter_log_level: info

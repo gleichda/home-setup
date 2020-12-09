@@ -1,0 +1,11 @@
+---
+# defaults file for homematic-exporter
+
+homematic_exporter_system_group: "homematic-exp"
+homematic_exporter_system_user: "{{ homematic_exporter_system_group }}"
+homematic_exporter_ref: master
+homematic_exporter_binary_install_dir: "/usr/local/bin"
+homematic_exporter_web_listen_address: 8000
+homematic_exporter_log_level: 30
+homematic_exporter_config_dir: "/etc/homematic_exporter"
+homematic_exporter_collect_intervall: 30

@@ -1,0 +1,19 @@
+---
+# tasks file for ddclient
+
+- name: write config file
+  template:
+    dest: /etc/ddclient.conf
+    src: ddclient.conf.j2
+  become: yes
+  register: config_file
+  notify: restart ddclient
+
+- name: start ddclient service
+  service:
+    name: ddclient
+    enabled: true
+    state: started
+  become: yes
+  when: not config_file.changed
+

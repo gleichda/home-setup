@@ -1,0 +1,13 @@
+all:
+  children:
+    monitoring:
+      hosts:
+        home.gleich.dev:
+          public_dns_name: home.gleich.dev
+          domain: "{{ public_dns_name }}"
+          dyndns_user: "{{ lookup('password', '../credentials/dyndns_user') }}"
+          dyndns_password: "{{ lookup('password', '../credentials/dyndns_password') }}"
+          hue_exporter_api_key: "{{ lookup('password', '../credentials/hue_api_key') }}"
+          hue_bridge_address: philips-hue
+          homematic_exporter_authtoken: "{{ lookup('password', '../credentials/homematic_authtoken') }}"
+          homematic_exporter_accesspoint: "{{ lookup('password', '../credentials/homematic_authtoken') }}"

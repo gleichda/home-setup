@@ -1,0 +1,38 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Prometheus Hue Exporter
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ _hue_exporter_system_user }}
+Group={{ _hue_exporter_system_group }}
+ExecStart={{ _hue_exporter_binary_install_dir }}/hue_exporter \
+--listen.address={{ hue_exporter_web_listen_address }} \
+--config.file=/etc/hue_exporter/config.yaml \
+--log.level={{ hue_exporter_log_level }}
+
+SyslogIdentifier=hue_exporter
+Restart=always
+RestartSec=1
+StartLimitInterval=0
+
+{% for m in ansible_mounts if m.mount == '/home' %}
+ProtectHome=read-only
+{% else %}
+ProtectHome=yes
+{% endfor %}
+NoNewPrivileges=yes
+
+{% if hue_exporter_systemd_version | int >= 232 %}
+ProtectSystem=strict
+ProtectControlGroups=true
+ProtectKernelModules=true
+ProtectKernelTunables=yes
+{% else %}
+ProtectSystem=full
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

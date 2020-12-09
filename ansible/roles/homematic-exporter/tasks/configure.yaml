@@ -1,0 +1,27 @@
+---
+- name: Copy the homematic_exporter systemd service file
+  template:
+    src: homematic_exporter.service.j2
+    dest: /etc/systemd/system/homematic_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart homematic_exporter
+
+- block:
+    - name: Create homematic_exporter config directory
+      file:
+        path: "{{ homematic_exporter_config_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: u+rwX,g+rwX,o=rX
+
+    - name: Copy the homematic_exporter config file
+      template:
+        src: config.ini.j2
+        dest: "{{ homematic_exporter_config_dir }}/config.ini"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart homematic_exporter

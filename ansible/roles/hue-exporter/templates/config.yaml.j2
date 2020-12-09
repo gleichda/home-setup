@@ -1,0 +1,11 @@
+ip_address: {{ hue_bridge_address }}
+api_key: {{ hue_exporter_api_key }}
+sensors:
+  # With `match_names` set, the exporter will set the names of temperature
+  # sensors and light level sensors to that of the motion sensor (the one that
+  # you've actually configured in the Hue app)
+  match_names: {{ hue_exporter_match_names }}
+  {% if hue_exporter_ignore_types | length > 0 %}
+ignore_types:
+    {{ hue_exporter_ignore_types }}
+  {% endif %}

@@ -1,0 +1,12 @@
+---
+# vars file for hue-exporter
+# From: https://github.com/cloudalchemy/ansible-node-exporter/blob/7755d73f1f043990adcfb9b2747fea4de7b7a67e/vars/main.yml
+download_url_map:
+  x86_64: "https://github.com/mitchellrj/hue_exporter/releases/download/v{{ hue_exporter_version }}/hue_exporter.linux-amd64"
+  aarch64: "https://github.com/mitchellrj/hue_exporter/releases/download/v{{ hue_exporter_version }}/hue_exporter.linux-arm64"
+  armv7l: "https://github.com/mitchellrj/hue_exporter/releases/download/v{{ hue_exporter_version }}/hue_exporter.linux-armv7.arm7"
+  armv6l: "https://github.com/mitchellrj/hue_exporter/releases/download/v{{ hue_exporter_version }}/hue_exporter.linux-armv6.linux-arm6"
+
+download_url: "{{ download_url_map[ansible_architecture] }}"
+
+

@@ -1,0 +1,5 @@
+- name: Set Hostname
+  hostname:
+    name: "{{ public_dns_name }}"
+  become: yes
+  notify: touch reboot file

@@ -1,0 +1,6 @@
+---
+# defaults file for ddclient
+protocol: dyndns2
+web_update_url: https://ipv4.nsupdate.info/myip
+dyndns_server: dyndns.inwx.com
+use_web: true

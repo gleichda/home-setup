@@ -1,0 +1,9 @@
+---
+# handlers file for hue-exporter
+
+- name: restart hue_exporter
+  become: true
+  systemd:
+    daemon_reload: true
+    name: hue_exporter
+    state: restarted

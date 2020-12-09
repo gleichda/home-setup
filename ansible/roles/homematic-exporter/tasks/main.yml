@@ -1,0 +1,8 @@
+---
+# tasks file for hue-exporter
+- import_tasks: preflight.yaml
+# In configuring we also create the config dir containing the python requirements
+- import_tasks: configure.yaml
+  become: true
+- import_tasks: install.yaml
+  become: true

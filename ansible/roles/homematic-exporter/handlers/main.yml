@@ -1,0 +1,10 @@
+---
+# handlers file for homematic-exporter
+
+- name: restart homematic_exporter
+  become: true
+  systemd:
+    daemon_reload: true
+    enabled: true
+    name: homematic_exporter
+    state: restarted

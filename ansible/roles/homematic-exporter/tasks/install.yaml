@@ -1,0 +1,62 @@
+- name: Create the homematic_exporter group
+  group:
+    name: "{{ homematic_exporter_system_group }}"
+    state: present
+    system: true
+  when: homematic_exporter_system_group != "root"
+
+- name: Create the homematic_exporter user
+  user:
+    name: "{{ homematic_exporter_system_user }}"
+    groups: "{{ homematic_exporter_system_group }}"
+    append: true
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+    home: /
+  when: homematic_exporter_system_user != "root"
+
+- block:
+  - name: Download homematic_exporter binary to localhost
+    become: false
+    get_url:
+      url: "https://github.com/auhlig/homematicip-exporter/archive/{{ homematic_exporter_ref }}.zip"
+      dest: "/tmp/homematic_exporter-{{ homematic_exporter_ref }}.zip"
+      mode: 0644
+    register: _download_binary
+    until: _download_binary is succeeded
+    retries: 5
+    delay: 2
+    delegate_to: localhost
+    check_mode: false
+
+  - name: Unpack homematic_exporter
+    become: false
+    unarchive:
+      src: "/tmp/homematic_exporter-{{ homematic_exporter_ref }}.zip"
+      dest: "/tmp/"
+      # TODO: Maybe also use creates
+    delegate_to: localhost
+    check_mode: false
+
+- name: Copy binary to server
+  copy:
+    src: "/tmp/homematicip-exporter-{{ homematic_exporter_ref }}/exporter.py"
+    dest: "{{ homematic_exporter_binary_install_dir }}/homematic_exporter.py"
+    mode: 0755
+    owner: root
+    group: root
+  notify: restart homematic_exporter
+
+- name: Copy requirements to server
+  copy:
+    src: "/tmp/homematicip-exporter-{{ homematic_exporter_ref }}/requirements.txt"
+    dest: "{{ homematic_exporter_config_dir }}/requirements.txt"
+    mode: 0644
+    owner: root
+    group: root
+
+- name: Install python requirements
+  pip:
+    requirements: "{{ homematic_exporter_config_dir }}/requirements.txt"
+  become: yes

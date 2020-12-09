@@ -1,0 +1,2 @@
+prometheus_version: 2.23.0
+ansible_lookup_url_follow_redirects: all

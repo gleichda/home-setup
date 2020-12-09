@@ -1,0 +1,14 @@
+---
+# vars file for aseline
+swap_size: 1GB
+swap_path: /swapfile
+packages_to_remove:
+  - snapd
+#  - cloud-guest-utils
+#  - cloud-init
+#  - dash
+#  - tmux
+
+packages_to_install:
+  - ddclient
+  - python3-pip

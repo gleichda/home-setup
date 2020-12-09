@@ -1,0 +1,19 @@
+collections:
+  - name: community.general
+
+roles:
+  - name: viasite-ansible.zsh
+    version: v3.3.2
+  - name: cloudalchemy.prometheus
+    version: 2.16.2
+  - name: cloudalchemy.node-exporter
+    version: 0.22.0
+  - name: cloudalchemy.alertmanager
+    version: 0.19.1
+  - name: cloudalchemy.grafana
+    version: 0.17.0
+  - name: geerlingguy.nginx
+    version: 2.8.0
+  - name: mivek.ddclient
+  - name: geerlingguy.certbot
+    version: 3.1.0
