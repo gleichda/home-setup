@@ -73,16 +73,35 @@
           static_configs:
             - targets:
                 - "localhost:8000"
+      prometheus_alertmanager_config:
+        - scheme: http
+          path_prefix: /alertmanager
+          static_configs:
+            - targets:
+                - "localhost:9093"
+      prometheus_alert_rules_files:
+        - ../prometheus-alerts/*.rules
       tags:
         - monitoring
         - prometheus
 
-# TODO: Configure Alertmanager
-#    - role: cloudalchemy.alertmanager
-#      alertmanager_web_external_url: https://home.gleich.dev/alertmanager
-#      tags:
-#        - monitoring
-#        - alertmanager
+    - role: cloudalchemy.alertmanager
+      alertmanager_web_external_url: https://home.gleich.dev/alertmanager
+      alertmanager_slack_api_url: "{{ lookup('password', '../credentials/slack_api_url') }}"
+      alertmanager_receivers:
+        - name: slack
+          slack_configs:
+            - send_resolved: true
+              channel: '#home-monitioring'
+      alertmanager_route:
+        group_by: [ 'alertname', 'cluster', 'service' ]
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 1h
+        receiver: slack
+      tags:
+        - monitoring
+        - alertmanager
 
     - role: cloudalchemy.grafana
       grafana_version: 7.3.6
@@ -147,6 +166,10 @@
           extra_parameters: |
             location /prometheus/ {
                 proxy_pass http://127.0.0.1:9090;
+            }
+
+            location /alertmanager/ {
+                proxy_pass http://127.0.0.1:9093;
             }
 
             location /grafana/ {

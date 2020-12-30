@@ -1,0 +1,11 @@
+groups:
+  - name: Custom rules
+    rules:
+      - alert: Heizung wärmt nicht
+        expr: "increase(homematicip_temperature_actual[10m]) < 1 and avg_over_time(homematicip_valve_position[10m]) > 0.5"
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: "{% raw %}Heizung in {{ $labels.room }} ist an, aber die Temperatur steigt nicht {% endraw %}"
+          summary: "{% raw %}Heizung in {{ $labels.room }} heizt nicht.{% endraw %}"
