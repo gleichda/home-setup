@@ -2,7 +2,7 @@ groups:
   - name: Custom rules
     rules:
       - alert: Heizung wärmt nicht
-        expr: "increase(homematicip_temperature_actual[10m]) < 1 and avg_over_time(homematicip_valve_position[10m]) > 0.5"
+        expr: "rate(homematicip_temperature_actual[10m]) < 1 and avg_over_time(homematicip_valve_position[10m]) > 0.5 and (abs(homematicip_temperature_actual - homematicip_temperature_setpoint) < 2 )"
         for: 5m
         labels:
           severity: warning

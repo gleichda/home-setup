@@ -256,7 +256,7 @@
               "expr": "hue_sensor_value{type=\"ZLLTemperature\"}/100",
               "instant": false,
               "interval": "",
-              "legendFormat": "{{ name }}",
+              "legendFormat": "Acutal",
               "refId": "A"
             }
           ],
@@ -348,21 +348,34 @@
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Ventil",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "homematicip_temperature_actual{room=\"Bad\"}",
+              "expr": "homematicip_temperature_actual{room=\"Badezimmer\"}",
               "instant": false,
+              "interval": "",
               "legendFormat": "Acutal",
               "refId": "A"
             },
             {
-              "expr": "homematicip_temperature_setpoint{room=\"Bad\"}",
+              "expr": "homematicip_temperature_setpoint{room=\"Badezimmer\"}",
+              "interval": "",
               "legendFormat": "Setpoint",
               "refId": "B"
+            },
+            {
+              "expr": "homematicip_valve_position{room=\"Badezimmer\"}",
+              "interval": "",
+              "legendFormat": "Ventilöffnung",
+              "refId": "C"
             }
           ],
           "thresholds": [],
@@ -385,6 +398,7 @@
           },
           "yaxes": [
             {
+              "$$hashKey": "object:67",
               "decimals": null,
               "format": "celsius",
               "label": null,
@@ -394,12 +408,13 @@
               "show": true
             },
             {
+              "$$hashKey": "object:68",
               "format": "short",
               "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
+              "max": "1",
+              "min": "0",
+              "show": true
             }
           ],
           "yaxis": {
@@ -453,7 +468,12 @@
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "Ventilöffnung",
+              "yaxis": 2
+            }
+          ],
           "spaceLength": 10,
           "stack": false,
           "steppedLine": false,
@@ -461,6 +481,7 @@
             {
               "expr": "homematicip_temperature_actual{room=\"Wohnzimmer\"}",
               "instant": false,
+              "interval": "",
               "legendFormat": "Acutal",
               "refId": "A"
             },
@@ -468,6 +489,12 @@
               "expr": "homematicip_temperature_setpoint{room=\"Wohnzimmer\"}",
               "legendFormat": "Setpoint",
               "refId": "B"
+            },
+            {
+              "expr": "homematicip_valve_position{room=\"Wohnzimmer\"}",
+              "interval": "",
+              "legendFormat": "Ventilöffnung",
+              "refId": "C"
             }
           ],
           "thresholds": [],
@@ -490,6 +517,7 @@
           },
           "yaxes": [
             {
+              "$$hashKey": "object:127",
               "decimals": null,
               "format": "celsius",
               "label": null,
@@ -499,12 +527,13 @@
               "show": true
             },
             {
+              "$$hashKey": "object:128",
               "format": "short",
               "label": null,
               "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
+              "max": "1",
+              "min": "0",
+              "show": true
             }
           ],
           "yaxis": {
@@ -546,7 +575,7 @@
             "h": 9,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 16
           },
           "hiddenSeries": false,
           "id": 9,
@@ -637,7 +666,7 @@
             "h": 9,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 16
           },
           "id": 7,
           "links": [],
