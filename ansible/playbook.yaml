@@ -104,7 +104,7 @@
         - alertmanager
 
     - role: cloudalchemy.grafana
-      grafana_version: 7.3.6
+      grafana_version: 7.3.7
       grafana_url: '%(protocol)s://%(domain)s:%(http_port)s/grafana/'
       grafana_datasources:
         - name: prometheus
@@ -145,8 +145,6 @@
         - monitoring
         - webserver
         - certbot
-
-
 
     - role: geerlingguy.nginx
       nginx_vhosts:
@@ -201,7 +199,10 @@
       tags:
         - exporters
         - hue-exporter
+        - monitoring
+
     - role: homematic-exporter
       tags:
         - exporters
         - homematic-exporter
+        - monitoring

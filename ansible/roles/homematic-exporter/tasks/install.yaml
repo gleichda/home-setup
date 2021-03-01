@@ -20,7 +20,7 @@
   - name: Download homematic_exporter binary to localhost
     become: false
     get_url:
-      url: "https://github.com/auhlig/homematicip-exporter/archive/{{ homematic_exporter_ref }}.zip"
+      url: "https://github.com/gleichda/homematicip-exporter/archive/{{ homematic_exporter_ref }}.zip"
       dest: "/tmp/homematic_exporter-{{ homematic_exporter_ref }}.zip"
       mode: 0644
     register: _download_binary

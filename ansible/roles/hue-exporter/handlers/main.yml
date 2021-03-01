@@ -7,3 +7,4 @@
     daemon_reload: true
     name: hue_exporter
     state: restarted
+    enabled: true

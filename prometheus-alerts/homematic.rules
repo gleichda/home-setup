@@ -1,11 +1,11 @@
 groups:
   - name: Custom rules
     rules:
-      - alert: Heizung wärmt nicht
-        expr: "rate(homematicip_temperature_actual[10m]) < 1 and avg_over_time(homematicip_valve_position[10m]) > 0.5 and (abs(homematicip_temperature_actual - homematicip_temperature_setpoint) < 2 )"
-        for: 5m
+      - alert: Fenster ist offen
+        expr: "homematicip_contact_open == 1"
+        for: 15m
         labels:
           severity: warning
         annotations:
-          description: "{% raw %}Heizung in {{ $labels.room }} ist an, aber die Temperatur steigt nicht {% endraw %}"
-          summary: "{% raw %}Heizung in {{ $labels.room }} heizt nicht.{% endraw %}"
+          description: "{% raw %}Fenster in {{ $labels.room }} ist offen seit 15 Minuten {% endraw %}"
+          summary: "{% raw %}Fenster in {{ $labels.room }} ist offen.{% endraw %}"

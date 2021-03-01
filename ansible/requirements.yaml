@@ -5,7 +5,7 @@ roles:
   - name: viasite-ansible.zsh
     version: v3.3.2
   - name: cloudalchemy.prometheus
-    version: 2.16.2
+    version: 2.16.3
   - name: cloudalchemy.node-exporter
     version: 0.22.0
   - name: cloudalchemy.alertmanager
