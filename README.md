@@ -76,3 +76,9 @@ ansible-galaxy install -r requirements.yaml
 
 ansible-playbook playbook.yaml
 ```
+
+# TODO
+
+- Move Roles out of repo
+- Write tests for roles
+- Generate script for secrets
